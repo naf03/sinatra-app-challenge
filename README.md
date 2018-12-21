@@ -1,6 +1,6 @@
  
 # Requirements
----
+------------
   - Python
   - Pip
   - Ansible
@@ -8,7 +8,7 @@
     - Ansible depends on the Python module Boto3 to communicate with AWS API. You can install Boto3 using pip: ```pip install boto boto3```
 
 # Project Structure
----
+------------
 ## Two Ansible roles are created to privision an EC2 instance and deploy the Sinatra app. 
 
 ## Ansible roles:
@@ -27,7 +27,7 @@
   - **main.yml** calls both provision_ec2.yml and deploy_sinatra_app.yml.
 
 # How to use this project
----
+------------
 ## Setup
 
 ### AWS
@@ -47,7 +47,7 @@
   1. Create a file called vaultpassword in the root directory of this project and put the vault password (see email for password) into the file. 
 
 ## Run
----
+------------
 From the root directory of this project
     ```ansible-playbook -i hosts main.yml --vault-password-file ./vaultpassword```
  
