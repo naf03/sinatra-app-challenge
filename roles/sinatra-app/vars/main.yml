@@ -1,0 +1,4 @@
+---
+app_directory: "/home/ubuntu/sinatra_app"
+packages:
+  - ruby

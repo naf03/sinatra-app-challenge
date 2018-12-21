@@ -1,0 +1,5 @@
+vaultpassword
+*.pem
+*.csv
+*.retry
+

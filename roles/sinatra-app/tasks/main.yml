@@ -1,0 +1,40 @@
+---  
+- name: Update apt cache
+  become: yes
+  apt: update_cache=yes
+
+- name: Install Ruby
+  become: yes
+  apt: 
+    name: "{{ packages }}"
+
+- name: Install Bundler
+  become: yes
+  gem:
+    name: bundler
+    user_install: no
+    state: present
+
+- name: Create directory for Sinatra app
+  file:
+    path: "{{ app_directory }}"
+    state: directory
+
+- name: Copy application files to EC2 instance
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'Gemfile', dest: "{{ app_directory }}" }
+    - { src: 'config.ru', dest: "{{ app_directory }}" }
+    - { src: 'helloworld.rb', dest: "{{ app_directory }}" }
+
+- name: Install gems from Gemfile
+  bundler:
+    state: present
+    gemfile: "{{ app_directory }}/Gemfile"
+
+- name: start Sinatra app
+  become: yes
+  shell: nohup bundle exec rackup -o 0.0.0.0 -p 80 &
+  args:
+    chdir: "{{ app_directory }}"
+          

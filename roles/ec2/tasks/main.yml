@@ -1,0 +1,51 @@
+---
+- name: Include vault file containing AWS keys
+  include_vars: "vars/aws-keys.yml"
+  
+- name: Create a security group for the EC2 instance
+  ec2_group:
+    name: "{{ security_group }}"
+    description: The security group for the Sinatra app server
+    region: "{{ region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    rules:
+      - proto: tcp
+        from_port: "{{ ssh_port }}"
+        to_port: "{{ ssh_port }}"
+        cidr_ip: "{{ ssh_cidr_ip }}"
+      - proto: tcp
+        from_port: "{{ http_port }}"
+        to_port: "{{ http_port }}"
+        cidr_ip: "{{ http_cidr_ip }}"
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+  
+- name: Create a new EC2 instance
+  ec2:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    group: "{{ security_group }}"
+    instance_type: "{{ instance_type }}"
+    image: "{{ image }}"
+    wait: true
+    region: "{{ region }}"
+    keypair: "{{ keypair }}"
+    count: "{{ count }}"
+  register: ec2
+
+- name: Add newly created EC2 instance to inventory for later use
+  add_host: 
+    name: "{{ item.public_ip }}"
+    groups: sinatra-app-server
+  with_items: "{{ ec2.instances }}"  
+
+- name: Wait for SSH to start up on the EC2 instance
+  wait_for:
+    host: "{{ item.public_ip }}"
+    port: "{{ ssh_port }}"
+    state: started
+  with_items: "{{ ec2.instances }}"
+
+          

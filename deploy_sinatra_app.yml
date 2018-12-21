@@ -1,0 +1,6 @@
+---
+- hosts: sinatra-app-server
+  remote_user: ubuntu
+  gather_facts: no
+  roles:
+    - sinatra-app

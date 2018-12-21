@@ -1,0 +1,9 @@
+---
+keypair: REA-key
+security_group: sinatra_app_server_sg
+region: ap-southeast-2
+count: 1
+ssh_port: 22
+http_port: 80
+ssh_cidr_ip: 0.0.0.0/0
+http_cidr_ip: 0.0.0.0/0
